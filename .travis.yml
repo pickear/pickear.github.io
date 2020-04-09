@@ -1,0 +1,33 @@
+language: node_js
+node_js: stable
+
+# 指定缓存模块，可选。缓存可加快编译速度。
+cache:
+  apt: true
+  yarn: true
+  directories:
+    - node_modules
+  
+before_install:
+  - git config user.name "pickear"
+  - git config user.email "pickear@gmail.com"
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH=$HOME/.yarn/bin:$PATH
+  - npm install -g hexo-cli
+install:
+  - yarn
+script:
+  - hexo clean
+  - hexo generate
+
+after_success:
+  - cd ./public
+  - git init
+  - git add --all .
+  - git commit -m "Travis CI Auto Builder"
+  - git push --force --quiet "https://${GH_TOKEN}@github.com/pickear/pickear.github.io.git" master:master
+# E: Build LifeCycle
+
+branches:
+  only:
+    - hexo
