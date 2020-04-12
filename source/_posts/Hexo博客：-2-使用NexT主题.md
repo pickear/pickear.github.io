@@ -162,3 +162,10 @@ busuanzi_count:
   page_pv_footer:
 ```
 这里将page_pv设置为false，即不为每篇博文统计访问量。博文的访问量通过LeanCloud来实现，请看 [Hexo博客：(4)添加服务](http://blog.gogl.top/2018/08/24/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-4-%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1/)
+##### 添加GitHub,Email
+在NexT主题的配置文件_config.yaml打开social，将GitHub,E-Mail前面的#号去掉，如:
+```
+social:
+GitHub: https://github.com/pickear || github
+E-Mail: mailto:pickear@gmail.com || envelope
+```
