@@ -4,7 +4,7 @@ tags:
   - pip
   - python
 categories:
-  - python
+  - 编程语言
 date: 2018-10-12 10:55:00
 ---
 ### 前言
