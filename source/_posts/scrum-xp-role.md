@@ -3,8 +3,9 @@ author: Dylan
 tags:
   - scrum
   - xp
-categories:
   - 敏捷开发
+categories:
+  - 软件方法
 date: 2018-09-27 15:12:00
 ---
 1. 客户

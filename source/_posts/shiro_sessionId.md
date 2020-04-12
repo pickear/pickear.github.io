@@ -2,8 +2,9 @@ title: '我的shiro之旅: 六自定义shiro的sessionId'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:16:00
 ---
 shiro有自己的sesison概念，shiro的session并不是java ee的session。通常，我们看到shiro的sessionId格式类似c6395bbc-425d-43b3-a444-04fee5a92e95，是因为shiro产生sesisonId是通过UUID生成的。我们可以看到shiro-core-xx.jar的org.apache.shiro.session.mgt.eis包下有个JavaUuidSessionIdGenerator，shiro的sessionId默认是通过该类生成的。可以看看源码。

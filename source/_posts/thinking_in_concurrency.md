@@ -3,8 +3,9 @@ author: Dylan
 tags:
   - ddd
   - concurrency
-categories:
   - 并发
+categories:
+  - 软件设计
 date: 2018-10-07 11:23:00
 ---
 #### 并发如何产生

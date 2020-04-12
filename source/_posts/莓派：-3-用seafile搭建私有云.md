@@ -2,7 +2,9 @@ title: 树莓派：(3)用seafile搭建私有云
 author: Dylan
 tags:
   - seafile
-categories: []
+  - 私有云
+categories: 
+  - 技术杂粹
 date: 2018-09-03 16:44:00
 ---
 ### 前言

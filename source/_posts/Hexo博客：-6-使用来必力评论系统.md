@@ -4,7 +4,7 @@ tags:
   - livere
   - 来必力
 categories:
-  - hexo
+  - 技术杂粹
 date: 2018-08-28 09:21:00
 ---
 ### 前方

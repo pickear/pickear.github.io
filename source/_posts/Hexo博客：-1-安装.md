@@ -3,7 +3,7 @@ author: Dylan
 tags:
   - hexo
 categories:
-  - hexo
+  - 技术杂粹
 date: 2018-08-22 23:09:00
 ---
 ## Hexo简介

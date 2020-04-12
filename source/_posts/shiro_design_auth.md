@@ -2,8 +2,9 @@ title: '我的shiro之旅: 十一 shiro的权限设计'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:36:00
 ---
 在这里，介绍一个简单，基本的权限设计。其中包括3个类，有User,Role,Auth。下面是类信息:

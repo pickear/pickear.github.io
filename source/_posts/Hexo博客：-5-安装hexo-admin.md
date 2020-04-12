@@ -4,7 +4,7 @@ tags:
   - hexo
   - hexo-admin
 categories:
-  - hexo
+  - 技术杂粹
 date: 2018-08-25 13:43:00
 ---
 ### 前言

@@ -2,6 +2,10 @@ title: Spring 控制器泛型化参数
 author: Dylan
 date: 2018-10-26 16:47:25
 tags:
+  - spring
+  - java
+categories:
+  - 编程语言
 ---
 ### 泛型的作用
 

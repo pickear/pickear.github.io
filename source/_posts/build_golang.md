@@ -4,7 +4,7 @@ tags:
   - raspberry
   - golang
 categories:
-  - golang
+  - 编程语言
 date: 2018-09-07 15:42:00
 ---
 ### 前言

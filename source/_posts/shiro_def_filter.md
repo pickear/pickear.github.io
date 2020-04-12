@@ -2,8 +2,9 @@ title: '我的shiro之旅: 四自定义filter'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:07:00
 ---
 上一篇文章对shiro的filter作了一些简单的介绍，接一下写写息自定义shiro的filter。使用shiro的时候，比较常用的filter有anon,authc,roles和perms。当我们想定义某个链接是拥有某些权限的用户才可以访问的时候，我们可以这样定义。/xx = roles[A,B]。在shiro中，表示当前用户同时拥有A,B两种角色才可以访问/xx这个链接，是一种&&（与）的关系，我们可以看看源码。在shiro-web-xx.jar的org.apache.shiro.web.filter.authz包下有RolesAuthorizationFilter这样一个类，这个类就是定义roles的filter。

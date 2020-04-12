@@ -2,8 +2,9 @@ title: 事务性
 author: Dylan
 tags:
   - 事务
-categories:
   - 并发
+categories:
+  - 软件设计
 date: 2018-10-07 10:34:00
 ---
 ### ACID

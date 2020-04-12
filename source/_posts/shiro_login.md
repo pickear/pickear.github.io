@@ -2,8 +2,9 @@ title: '我的shiro之旅: 十三shiro 用户的登录与退出'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 12:05:00
 ---
 

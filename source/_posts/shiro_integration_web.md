@@ -2,8 +2,9 @@ title: '我的shiro之旅:五shiro与普通web项目集成'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:12:00
 ---
 在第二篇文章讲了shiro与web项目集成，其中只要是与spring项目的集成。公司有些旧项目，是用servlet写的，并不适合用第二篇文章去搭建shiro。这里想讲讲shiro与普通的项目集成。与普通的web项目集成，shiro只需要两个依赖包，在项目的pom.xml下加入以下依赖：

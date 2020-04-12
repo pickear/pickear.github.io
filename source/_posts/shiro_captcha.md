@@ -2,8 +2,9 @@ title: '我的shiro之旅: 十六验证码'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 12:13:00
 ---
 &emsp;&emsp;验证码几乎是所有站点都会用到的，验证码在一定程序上能有效处理一些恶意攻击。验证码的类库有很多，这里用到生成验证码的工具是SimpleCaptcha，目前在官网看到最新版的是1.2.1，[下载地址](http://sourceforge.net/projects/simplecaptcha/files/simplecaptcha-1.2.1.jar/download)。

@@ -2,8 +2,9 @@ title: '我的shiro之旅:二 让Shiro保护你的应用'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 10:54:00
 ---
 上一篇文章只是对Shiro作了一个简单的介绍，接下来的内容，将会介绍如何将shiro集成到应用中。这篇文章只要是介绍shiro跟spring项目的集成，以后也会写一些关于Shiro集成到普通web项目的一些文章。这些用到的是目前shiro的最新版本1.2.2，spring也是目前最前版本3.2.3.RELEASE，项目的依赖用的是mavne管理。spring的依赖这里就不作介绍了，相信有兴趣看这篇文件的童鞋都搭建过spring的项目，这里给出3个Shiro的依赖。在pom.xml加上以下的依赖:

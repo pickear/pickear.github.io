@@ -4,7 +4,7 @@ tags:
   - json
   - 泛型
 categories:
-  - java
+  - 编程语言
 date: 2018-09-14 10:35:00
 ---
 ### 前言

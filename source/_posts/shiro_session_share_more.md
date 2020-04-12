@@ -2,8 +2,9 @@ title: '我的shiro之旅: 八shiro session共享的进一步'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:22:00
 ---
 在第七篇文章说了一下如何实现shiro的共享。那个共享并不只是session的共享，也包括了Authorization的共享。如果读者还没看过文章七，建议先看看。

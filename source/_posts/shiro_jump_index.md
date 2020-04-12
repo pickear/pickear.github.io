@@ -2,8 +2,9 @@ title: '我的shiro之旅: 十五shiro登录成功后,跳转到登录前的页�
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 12:11:00
 ---
 

@@ -4,7 +4,7 @@ tags:
   - hexo
   - NexT
 categories:
-  - hexo
+  - 技术杂粹
 date: 2018-08-23 10:13:00
 ---
 ## 安装NexT

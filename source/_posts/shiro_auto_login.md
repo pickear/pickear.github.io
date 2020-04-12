@@ -2,8 +2,9 @@ title: '我的shiro之旅: 十四shiro 自动登录'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 12:08:00
 ---
 

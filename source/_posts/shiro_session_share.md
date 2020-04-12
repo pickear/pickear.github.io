@@ -2,8 +2,9 @@ title: '我的shiro之旅: 七shiro session 共享'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 11:19:00
 ---
 很久没有写过博文，一来是因为工作比较紧，二来是因为很长一段时间没有写博文的心情。今天，想继续写写shiro的一些文章，这篇文章只要想分享的是shiro 共享session的内容。

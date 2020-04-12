@@ -4,7 +4,7 @@ tags:
   - hexo
   - NexT
 categories:
-  - hexo
+  - 技术杂粹
 date: 2020-04-12 13:44:00
 ---
 #### 插入代码

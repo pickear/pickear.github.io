@@ -2,6 +2,10 @@ title: Hexo博客：(4)添加阅读次数
 author: Dylan
 date: 2018-08-24 13:30:31
 tags:
+  - hexo
+  - leancloud
+categories:
+  - 技术杂粹
 ---
 ### 前言
 NexT支持通过LeanCloud添加阅读次数统计。

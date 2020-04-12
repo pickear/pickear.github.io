@@ -2,8 +2,9 @@ title: '我的shiro之旅: 三浅谈shiro的filter'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 10:59:00
 ---
 前段时间比较懒，项目也有些紧，没有写什么东西。现在再对Shiro做一些整理。上一篇主要介绍了一个完整而又简单的shiro集成到项目的例子，主要是spring项目。这篇文章，想谈一下关于shiro的filter，这需要读者对shiro有一定的理解，至少有用过shiro。

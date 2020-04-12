@@ -4,7 +4,7 @@ tags:
   - hexo
   - github
 categories:
-  - hexo
+  - 技术杂粹
 date: 2018-08-23 13:21:00
 ---
 ## 情景

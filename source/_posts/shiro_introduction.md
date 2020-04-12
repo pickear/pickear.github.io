@@ -2,8 +2,9 @@ title: '我的shiro之旅:一 shiro简介'
 author: Dylan
 tags:
   - shiro
-categories:
   - java
+categories:
+  - 编程语言
 date: 2018-09-16 10:44:00
 ---
 前段时间，因为项目需要，用shiro搭建了一个权限系统。现在项目已完成，希望通过以文章的形式，对shiro进行一些总结。

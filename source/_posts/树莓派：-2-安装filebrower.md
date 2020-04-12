@@ -4,7 +4,7 @@ tags:
   - 树莓派
   - filebrowser
 categories:
-  - 树莓派
+  - 技术杂粹
 date: 2018-09-02 18:55:00
 ---
 ### 前言

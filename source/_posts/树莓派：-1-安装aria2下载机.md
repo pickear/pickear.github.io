@@ -4,9 +4,9 @@ tags:
   - raspberry
   - aria2
   - webui
-categories:
   - 树莓派
-  - aria2
+categories:
+  - 技术杂粹
 date: 2018-09-01 20:59:00
 ---
 ### 前言

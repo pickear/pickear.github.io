@@ -2,6 +2,10 @@ title: '我的shiro之旅: 十自定义shiro的SessionIdCookie'
 author: Dylan
 date: 2018-09-16 11:33:38
 tags:
+  - shiro
+  - java
+categories:
+  - 编程语言
 ---
 在使用shiro的时候，曾经有段时间很苦恼，因为我cookie的sessionId经常无故被改，然后抛There is no session with id [xxxx]的异常。我们知道，当请求过来，shiro创建session后，会把sessionId写回到客户端的cookie中。每二个请求过来时，shiro会拿到这个cookie里的sessionId去查找，如果查找不到，就有可能抛There is no session with id的异常。通过抛这个异常的会有两种情况，一种就是我刚才说的，cookie被改写了，因为shiro默认的cookie名叫JSESSIONID，当在web.xml里配置的请求拦截配得不合理时，就有可能被改写。在我的项目中，因为有些静态资源配置了不拦截，就会被容器改写了这个cookie。后来，干脆把cookie的名字改了，不再叫JSESSIONID。还有一种就是浏览器打开很久都没有操作，然后shiro定时清理了不活动的session，这时浏览器再发请求过来，因为session已被清理，也会抛There is no session with id。更改cookie的名字方法如下：
 
