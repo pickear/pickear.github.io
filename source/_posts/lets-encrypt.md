@@ -4,7 +4,7 @@ tags:
   - ssl
   - https
 categories:
-  - ssl
+  - 技术杂粹
 date: 2018-09-20 15:19:00
 ---
 #### 什么是Let's Encrypt
