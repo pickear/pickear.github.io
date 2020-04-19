@@ -104,7 +104,7 @@ git add .
 git commit -m "travis-ci持续集成"
 git push origin hexo
 ```
-如果提交正常，过一会，访问https://pickear.github.io/(这里指的是你的github.io地址)，就可以正常访问博客了。并且，在github的远程仓库master分支中，存在了travis-ci编译出来的静态文件。
+如果提交正常，过一会，访问 https://pickear.github.io/ (这里指的是你的github.io地址)，就可以正常访问博客了。并且，在github的远程仓库master分支中，存在了travis-ci编译出来的静态文件。
 
 #### (10)写博文
 hexo的博文源文件是在source\_posts下的，我们可以在此目录下添加一个md文件，例如"Hexo博客：-8-Travis CI自动化编译发布.md"，然后在文件里写博文。博文的语法是markdown，博文前可以添加分类，标签，作者和日期等信息:
