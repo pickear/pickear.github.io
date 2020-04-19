@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="树莓派,filebrowser," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言filebrower 是一个轻量的文件管理系统。可以很方便地管理硬盘上的文件。filebrower支持的平台也很多，包括linux,windows,mac。 安装 下载首先，将filebrower的安装包 下载到树莓派上。解压后放在&#x2F;mnt&#x2F;hd&#x2F;filebrowser目录下。  修改配置文件(filebrowser.yaml)   12345678910111213141516port: 6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树莓派：(2)安装filebrower">
+<meta property="og:url" content="http://yoursite.com/2018/09/02/%E6%A0%91%E8%8E%93%E6%B4%BE%EF%BC%9A-2-%E5%AE%89%E8%A3%85filebrower/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="前言filebrower 是一个轻量的文件管理系统。可以很方便地管理硬盘上的文件。filebrower支持的平台也很多，包括linux,windows,mac。 安装 下载首先，将filebrower的安装包 下载到树莓派上。解压后放在&#x2F;mnt&#x2F;hd&#x2F;filebrowser目录下。  修改配置文件(filebrowser.yaml)   12345678910111213141516port: 6">
+<meta property="og:image" content="http://yoursite.com/images/blog/filebrower_login.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/filebrower_index.png">
+<meta property="article:published_time" content="2018-09-02T18:55:00.000Z">
+<meta property="article:modified_time" content="2020-04-19T01:44:22.639Z">
+<meta property="article:author" content="Dylan">
+<meta property="article:tag" content="树莓派">
+<meta property="article:tag" content="filebrowser">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/blog/filebrower_login.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/02/树莓派：-2-安装filebrower/"/>
+
+
+
+
+
+  <title>树莓派：(2)安装filebrower | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/02/%E6%A0%91%E8%8E%93%E6%B4%BE%EF%BC%9A-2-%E5%AE%89%E8%A3%85filebrower/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dylan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">树莓派：(2)安装filebrower</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T18:55:00+00:00">
+                2018-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E7%B2%B9/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂粹</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/02/%E6%A0%91%E8%8E%93%E6%B4%BE%EF%BC%9A-2-%E5%AE%89%E8%A3%85filebrower/" class="leancloud_visitors" data-flag-title="树莓派：(2)安装filebrower">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p><a href="https://filebrowser.github.io/" target="_blank" rel="noopener">filebrower</a> 是一个轻量的文件管理系统。可以很方便地管理硬盘上的文件。filebrower支持的平台也很多，包括linux,windows,mac。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><ol>
+<li><p>下载<br>首先，将filebrower的安装包 <a href="https://github.com/filebrowser/filebrowser/releases/download/v1.10.0/linux-arm64-filebrowser.tar.gz" target="_blank" rel="noopener">下载</a>到树莓派上。解压后放在/mnt/hd/filebrowser目录下。</p>
+</li>
+<li><p>修改配置文件(filebrowser.yaml)</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">port: 6868</span><br><span class="line">##baseURL: &#x2F;admin</span><br><span class="line">noAuth: false</span><br><span class="line">alternativeReCaptcha: false,</span><br><span class="line">reCaptchaKey: &#39;&#39;</span><br><span class="line">reCaptchaSecret: &#39;&#39;</span><br><span class="line">database: &quot;&#x2F;mnt&#x2F;hd&#x2F;filebrowser&#x2F;database.db&quot;</span><br><span class="line">log: stderr</span><br><span class="line">plugin: &#39;&#39;</span><br><span class="line">scope: &quot;&#x2F;mnt&#x2F;hd&#x2F;aria2&#x2F;data&quot;  ##管理某个目录</span><br><span class="line">allowCommands: false</span><br><span class="line">allowEdit: true</span><br><span class="line">allowNew: true</span><br><span class="line">commands:</span><br><span class="line">- git</span><br><span class="line">- svn</span><br></pre></td></tr></table></figure>
+<p>添加启动脚本start_filebrowser.sh:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">! /bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/frpc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">## BEGIN INIT INFO</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Provides: frpc</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Required-Start:    <span class="variable">$network</span> <span class="variable">$local_fs</span> <span class="variable">$remote_fs</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Required-Stop:     <span class="variable">$network</span> <span class="variable">$local_fs</span> <span class="variable">$remote_fs</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Default-Start:     2 3 4 5</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Default-Stop:      0 1 6</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Short-Description: frpc init script.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Description: Starts and stops frpc services.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">## END INIT INFO</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">VAR</span></span><br><span class="line">RUN="/mnt/hd/filebrowser/filebrowser"</span><br><span class="line">ARIA_PID=$(ps -ef | grep '/mnt/hd/filebrowser/filebrowser' | grep -v grep | awk '&#123;print $2&#125;')</span><br><span class="line"><span class="meta">#</span><span class="bash"> Carry out specific <span class="built_in">functions</span> when asked to by the system</span></span><br><span class="line">case "$1" in</span><br><span class="line">  start)</span><br><span class="line">    echo "starting script filebrowser "</span><br><span class="line">    if [ -z "$ARIA_PID" ]; then</span><br><span class="line">      $RUN  &amp;</span><br><span class="line">      echo "started"</span><br><span class="line">    else</span><br><span class="line">      echo "filebrowser already started"</span><br><span class="line">    fi</span><br><span class="line">    ;;</span><br><span class="line">  stop)</span><br><span class="line">    echo "stopping script filebrowser"</span><br><span class="line">    if [ ! -z "$ARIA_PID" ]; then</span><br><span class="line">      kill $ARIA_PID</span><br><span class="line">    fi</span><br><span class="line">    echo "OK"</span><br><span class="line">    ;;</span><br><span class="line">  restart)</span><br><span class="line">    echo "restarting script filebrowser"</span><br><span class="line">    if [ ! -z "$ARIA_PID" ]; then</span><br><span class="line">      kill $ARIA_PID</span><br><span class="line">    fi</span><br><span class="line">    sleep 3   # TODO:Maybe need to be adjust</span><br><span class="line">    $RUN &amp;</span><br><span class="line">    echo "OK"</span><br><span class="line">    ;;</span><br><span class="line">  status)</span><br><span class="line">    if [ ! -z "$ARIA_PID" ]; then</span><br><span class="line">      echo "the frpc is running with PID = "$ARIA_PID</span><br><span class="line">    else</span><br><span class="line">      echo "no process found for filebrowser"</span><br><span class="line">    fi</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    echo "Usage: /mnt/hd/filebrowser/start_filebrowser.sh &#123;start|stop|restart|status&#125;"</span><br><span class="line">    exit 1</span><br><span class="line">    ;;</span><br><span class="line">esac</span><br><span class="line">exit 0</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">########################################</span></span></span><br></pre></td></tr></table></figure>
+<p>启动filebrower</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./start_filebrowser.sh start</span><br></pre></td></tr></table></figure>
+<p>打开浏览器，访问<a href="http://ip:6868,默认用户名密码为admin:admin。">http://ip:6868,默认用户名密码为admin:admin。</a><br><img src="/images/blog/filebrower_login.png" alt="filebrower_login"></p>
+<p><img src="/images/blog/filebrower_index.png" alt="filebrower_index"></p>
+<h3 id="映射到外网"><a href="#映射到外网" class="headerlink" title="映射到外网"></a>映射到外网</h3><p>在这里，我们也用FRP映射到外网。FRP更多内容，请看 <a href="http://tun.gogl.top" target="_blank" rel="noopener">FRP外网穿透</a> 或者 <a href="https://github.com/fatedier/frp" target="_blank" rel="noopener">FRP官方</a>。</p>
+<ol>
+<li>配置外网FRP服务端(frps.ini)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_addr &#x3D; 0.0.0.0</span><br><span class="line">bind_port &#x3D; 5000</span><br><span class="line">log_file &#x3D; .&#x2F;logs&#x2F;frps.log</span><br><span class="line">log_level &#x3D; debug</span><br><span class="line">log_max_days &#x3D; 2</span><br><span class="line">vhost_http_port &#x3D; 5001</span><br><span class="line">vhost_https_port &#x3D; 5002</span><br><span class="line">dashboard_port &#x3D; 5003</span><br><span class="line">dashboard_user &#x3D; admin</span><br><span class="line">dashboard_pwd &#x3D; xxxxxxx</span><br><span class="line">privilege_mode &#x3D; false</span><br><span class="line">privilege_allow_ports &#x3D; 8000-9999</span><br><span class="line">max_pool_count &#x3D; 30</span><br><span class="line">authentication_timeout &#x3D; 100</span><br><span class="line"></span><br><span class="line">[1281035284]</span><br><span class="line">type &#x3D; http</span><br><span class="line">auth_token &#x3D; 111111</span><br><span class="line">bind_addr &#x3D; 0.0.0.0</span><br><span class="line">listen_port &#x3D; 8004</span><br><span class="line">custom_domains &#x3D; www.xxx.com</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>配置内网树莓派FRP客户端服务(frpc.ini)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; xxx.xxx.xxx  ##服务端ip</span><br><span class="line">server_port &#x3D; 5000  ##服务端ip</span><br><span class="line">log_level &#x3D; error</span><br><span class="line">log_file &#x3D; &#x2F;mnt&#x2F;hd&#x2F;frpc&#x2F;logs&#x2F;frpc.log</span><br><span class="line">auth_token &#x3D; 111111  ##服务商设置的令牌</span><br><span class="line"></span><br><span class="line">[1281035284]</span><br><span class="line">local_ip &#x3D; 127.0.0.1</span><br><span class="line">local_port &#x3D; 6868</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用域名<br>在域名设置将域名指向外网服务商的ip,配置外网服务器的nginx，添加以下内容:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  www.xxx.com;</span><br><span class="line">        root &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;html;</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            proxy_pass http:&#x2F;&#x2F;127.0.0.1:5001;</span><br><span class="line">            proxy_redirect off;</span><br><span class="line">            proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">            proxy_set_header Host $host;</span><br><span class="line">            client_max_body_size 10m; </span><br><span class="line">            client_body_buffer_size 128k;</span><br><span class="line">            proxy_connect_timeout 90; </span><br><span class="line">            proxy_send_timeout 90; </span><br><span class="line">            proxy_read_timeout 90; </span><br><span class="line">            proxy_buffer_size 4k; </span><br><span class="line">            proxy_buffers 4 32k; </span><br><span class="line">            proxy_busy_buffers_size 64k; </span><br><span class="line">            proxy_temp_file_write_size 64k;</span><br><span class="line">            access_log    &#x2F;usr&#x2F;local&#x2F;application&#x2F;nginx&#x2F;logs&#x2F;file.access.log;</span><br><span class="line">            error_log     &#x2F;usr&#x2F;local&#x2F;application&#x2F;nginx&#x2F;logs&#x2F;file.error.log;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>注意这里代理的是5001端口。<br>打开浏览器，访问<a href="http://www.xxx.com。" target="_blank" rel="noopener">www.xxx.com。</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/" rel="tag"># 树莓派</a>
+          
+            <a href="/tags/filebrowser/" rel="tag"># filebrowser</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/01/%E6%A0%91%E8%8E%93%E6%B4%BE%EF%BC%9A-1-%E5%AE%89%E8%A3%85aria2%E4%B8%8B%E8%BD%BD%E6%9C%BA/" rel="next" title="树莓派：(1)安装aria2下载机">
+                <i class="fa fa-chevron-left"></i> 树莓派：(1)安装aria2下载机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/03/%E8%8E%93%E6%B4%BE%EF%BC%9A-3-%E7%94%A8seafile%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BA%91/" rel="prev" title="树莓派：(3)用seafile搭建私有云">
+                树莓派：(3)用seafile搭建私有云 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTEzNi8xNTY2Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Dylan" />
+            
+              <p class="site-author-name" itemprop="name">Dylan</p>
+              <p class="site-description motion-element" itemprop="description">以往不再，未来没来</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pickear" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pickear@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+		  
+		  
+			<div class="links-of-blogroll motion-element links-of-blogroll-block">
+			  <div class="links-of-blogroll-title">
+				<!-- modify icon to fire by szw -->
+				<i class="fa fa-history fa-" aria-hidden="true"></i>
+				最新文章
+			  </div>
+			  <ul class="links-of-blogroll-list">
+				
+				
+				  <li>
+					<a href="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" title="Hexo博客：(8)Travis CI自动化编译发布" target="_blank">Hexo博客：(8)Travis CI自动化编译发布</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" title="开源工具集绵" target="_blank">开源工具集绵</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" title="Hexo博客：(7)给NexT主题添加最新文章模块" target="_blank">Hexo博客：(7)给NexT主题添加最新文章模块</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/11/05/concurrency_disagress_read/" title="并发:不一致读带来的问题" target="_blank">并发:不一致读带来的问题</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/10/26/spring-controller-generic/" title="Spring 控制器泛型化参数" target="_blank">Spring 控制器泛型化参数</a>
+				  </li>
+				
+			  </ul>
+			</div>
+		  
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#映射到外网"><span class="nav-number">3.</span> <span class="nav-text">映射到外网</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan 版权所有 粤ICP备18080701号</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dDRzyTmQVCxeR8rMT6f5cmxT-gzGzoHsz", "ca49g09mFXh5lV0qx7c5lbQE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

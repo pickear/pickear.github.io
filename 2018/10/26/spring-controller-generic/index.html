@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,spring," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="泛型的作用&amp;emsp;&amp;emsp;在JDK1.5开始JAVA就引入了泛型，泛型的引入，能够减少我们在运行时的很多错误，让错误在编译期间就被发现。例如定义一个列表:List list &#x3D; new ArrayList(); 我们可以往这个列表添加数值类型，同时也可以往列表添加字符串，在编译期间编译器不会给我们错误的提示。但在运行时，程序就会出错。当我们使用泛型定义列表:List list &#x3D; new">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring 控制器泛型化参数">
+<meta property="og:url" content="http://yoursite.com/2018/10/26/spring-controller-generic/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="泛型的作用&amp;emsp;&amp;emsp;在JDK1.5开始JAVA就引入了泛型，泛型的引入，能够减少我们在运行时的很多错误，让错误在编译期间就被发现。例如定义一个列表:List list &#x3D; new ArrayList(); 我们可以往这个列表添加数值类型，同时也可以往列表添加字符串，在编译期间编译器不会给我们错误的提示。但在运行时，程序就会出错。当我们使用泛型定义列表:List list &#x3D; new">
+<meta property="article:published_time" content="2018-10-26T16:47:25.000Z">
+<meta property="article:modified_time" content="2020-04-19T01:44:22.639Z">
+<meta property="article:author" content="Dylan">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/26/spring-controller-generic/"/>
+
+
+
+
+
+  <title>Spring 控制器泛型化参数 | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/26/spring-controller-generic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dylan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring 控制器泛型化参数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-26T16:47:25+00:00">
+                2018-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index">
+                    <span itemprop="name">编程语言</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/10/26/spring-controller-generic/" class="leancloud_visitors" data-flag-title="Spring 控制器泛型化参数">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="泛型的作用"><a href="#泛型的作用" class="headerlink" title="泛型的作用"></a>泛型的作用</h3><p>&emsp;&emsp;在JDK1.5开始JAVA就引入了泛型，泛型的引入，能够减少我们在运行时的很多错误，让错误在编译期间就被发现。例如定义一个列表:List list = new ArrayList(); 我们可以往这个列表添加数值类型，同时也可以往列表添加字符串，在编译期间编译器不会给我们错误的提示。但在运行时，程序就会出错。当我们使用泛型定义列表:List<String> list = new ArrayList&lt;&gt;()时，我们只能往列表添加字符串，如果想往列表添加数值，编译器就会马上告诉你不允许。泛型只在编译期起作用，编译后泛型的信息就会被擦除。</p>
+<h3 id="参数泛型化"><a href="#参数泛型化" class="headerlink" title="参数泛型化"></a>参数泛型化</h3><p>&emsp;&emsp;下面先给一段代码。<br>我们先定义一个用户类User:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String username;</span><br><span class="line">	<span class="keyword">private</span> String nickName;</span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">	<span class="keyword">private</span> String addr;</span><br><span class="line">	</span><br><span class="line">	##getter and setter</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们想通过用户名或者昵称来查询用户信息，在Controller里我们可以这样做:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/query"</span>,method = GET)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">query</span><span class="params">(User user, Model model)</span></span>&#123;</span><br><span class="line">	List&lt;User&gt; users = userService.query(user);</span><br><span class="line">	model.addAttribute(<span class="string">"users"</span>,users);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"users"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们知道，当我们在发起HTTP请求的时候，如果我们传递username或者nickName参数，Spring会自动帮我们将值绑定到user中，我们在query方法中直接使用就行，这个很容易。<br>接下来，我们想做一下分页功能，几乎每一个web站点都离不开分页。我们想查某一个国家的用户，并分页显示。要完成分页功能，首先我们定义一个分页类型.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Page</span>&lt;<span class="title">P</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">int</span> DEFAULT_SIZE = <span class="number">15</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> page = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size = DEFAULT_SIZE;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> totalPages=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> totalCount = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> P param;</span><br><span class="line">    </span><br><span class="line">	##getter and setter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在分页对象里，我们定义了一个泛型P，因为我们想通过P来接收前端传过来的查询参数。并且，我们并不知道这个P的具体类型是什么。可能不同的业务逻辑里，这个参数类型实体是不同的。<br>很显示，我们分页查询，希望这样做:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/queryPage"</span>,method = GET)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">queryPage</span><span class="params">(Page&lt;User&gt; page, Model model)</span></span>&#123;</span><br><span class="line">	List&lt;User&gt; users = userService.queryPage(page);</span><br><span class="line">	model.addAttribute(<span class="string">"page"</span>,page);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"users"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们希望，在发起http请求时带上page=1,size=15,param.addr=’中国’，服务端会返回15个中国用户的信息。但是结果却让我们大跌眼镜，事情并没有往我们想的方向发展，addr没能正确绑定到User里。<br>为什么呢?最主要原因是因为泛型运行时擦除的原因。在运行时，Spring无法知道Page的泛型类型是什么，只能用Object来初始化，而要将addr绑定到Object里，显然不行。</p>
+<h3 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h3><p>&emsp;&emsp;很多时候，参数的泛型化是不可避免的，泛型能让代码更加优雅。当然，上面的例子我们可以避开泛型化处理分页也是很简单的。我们如何可以将数据绑定到泛型里呢？首先我们来了解一下Spring的数据绑定逻辑。<br>下面是Spring的ModelAttributeMethodProcessor类的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ModelAttributeMethodProcessor</span> <span class="keyword">implements</span> <span class="title">HandlerMethodArgumentResolver</span>, <span class="title">HandlerMethodReturnValueHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">final</span> Log logger = LogFactory.getLog(getClass());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> annotationNotRequired;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Class constructor.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> annotationNotRequired if "true", non-simple method arguments and</span></span><br><span class="line"><span class="comment">	 * return values are considered model attributes with or without a</span></span><br><span class="line"><span class="comment">	 * &#123;<span class="doctag">@code</span> <span class="doctag">@ModelAttribute</span>&#125; annotation.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ModelAttributeMethodProcessor</span><span class="params">(<span class="keyword">boolean</span> annotationNotRequired)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.annotationNotRequired = annotationNotRequired;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Returns &#123;<span class="doctag">@code</span> true&#125; if the parameter is annotated with</span></span><br><span class="line"><span class="comment">	 * &#123;<span class="doctag">@link</span> ModelAttribute&#125; or, if in default resolution mode, for any</span></span><br><span class="line"><span class="comment">	 * method parameter that is not a simple type.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (parameter.hasParameterAnnotation(ModelAttribute<span class="class">.<span class="keyword">class</span>) ||</span></span><br><span class="line"><span class="class">				(<span class="title">this</span>.<span class="title">annotationNotRequired</span> &amp;&amp; !<span class="title">BeanUtils</span>.<span class="title">isSimpleProperty</span>(<span class="title">parameter</span>.<span class="title">getParameterType</span>())))</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Resolve the argument from the model or if not found instantiate it with</span></span><br><span class="line"><span class="comment">	 * its default if it is available. The model attribute is then populated</span></span><br><span class="line"><span class="comment">	 * with request values via data binding and optionally validated</span></span><br><span class="line"><span class="comment">	 * if &#123;<span class="doctag">@code</span> <span class="doctag">@java</span>.validation.Valid&#125; is present on the argument.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> BindException if data binding and validation result in an error</span></span><br><span class="line"><span class="comment">	 * and the next method parameter is not of type &#123;<span class="doctag">@link</span> Errors&#125;.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> Exception if WebDataBinder initialization fails.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer,</span></span></span><br><span class="line"><span class="function"><span class="params">			NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">		String name = ModelFactory.getNameForParameter(parameter);</span><br><span class="line">		Object attribute = (mavContainer.containsAttribute(name) ? mavContainer.getModel().get(name) :</span><br><span class="line">				createAttribute(name, parameter, binderFactory, webRequest));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!mavContainer.isBindingDisabled(name)) &#123;</span><br><span class="line">			ModelAttribute ann = parameter.getParameterAnnotation(ModelAttribute<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">			<span class="keyword">if</span> (ann != <span class="keyword">null</span> &amp;&amp; !ann.binding()) &#123;</span><br><span class="line">				mavContainer.setBindingDisabled(name);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);</span><br><span class="line">		<span class="keyword">if</span> (binder.getTarget() != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!mavContainer.isBindingDisabled(name)) &#123;</span><br><span class="line">				bindRequestParameters(binder, webRequest);</span><br><span class="line">			&#125;</span><br><span class="line">			validateIfApplicable(binder, parameter);</span><br><span class="line">			<span class="keyword">if</span> (binder.getBindingResult().hasErrors() &amp;&amp; isBindExceptionRequired(binder, parameter)) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> BindException(binder.getBindingResult());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Add resolved attribute and BindingResult at the end of the model</span></span><br><span class="line">		Map&lt;String, Object&gt; bindingResultModel = binder.getBindingResult().getModel();</span><br><span class="line">		mavContainer.removeAttributes(bindingResultModel);</span><br><span class="line">		mavContainer.addAllAttributes(bindingResultModel);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> binder.convertIfNecessary(binder.getTarget(), parameter.getParameterType(), parameter);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Extension point to create the model attribute if not found in the model.</span></span><br><span class="line"><span class="comment">	 * The default implementation uses the default constructor.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> attributeName the name of the attribute (never &#123;<span class="doctag">@code</span> null&#125;)</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> methodParam the method parameter</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> binderFactory for creating WebDataBinder instance</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> request the current request</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> the created model attribute (never &#123;<span class="doctag">@code</span> null&#125;)</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">createAttribute</span><span class="params">(String attributeName, MethodParameter methodParam,</span></span></span><br><span class="line"><span class="function"><span class="params">			WebDataBinderFactory binderFactory, NativeWebRequest request)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> BeanUtils.instantiateClass(methodParam.getParameterType());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Extension point to bind the request to the target object.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> binder the data binder instance to use for the binding</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> request the current request</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">bindRequestParameters</span><span class="params">(WebDataBinder binder, NativeWebRequest request)</span> </span>&#123;</span><br><span class="line">		((WebRequestDataBinder) binder).bind(request);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Validate the model attribute if applicable.</span></span><br><span class="line"><span class="comment">	 * &lt;p&gt;The default implementation checks for &#123;<span class="doctag">@code</span> <span class="doctag">@javax</span>.validation.Valid&#125;,</span></span><br><span class="line"><span class="comment">	 * Spring's &#123;<span class="doctag">@link</span> org.springframework.validation.annotation.Validated&#125;,</span></span><br><span class="line"><span class="comment">	 * and custom annotations whose name starts with "Valid".</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> binder the DataBinder to be used</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> methodParam the method parameter</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">validateIfApplicable</span><span class="params">(WebDataBinder binder, MethodParameter methodParam)</span> </span>&#123;</span><br><span class="line">		Annotation[] annotations = methodParam.getParameterAnnotations();</span><br><span class="line">		<span class="keyword">for</span> (Annotation ann : annotations) &#123;</span><br><span class="line">			Validated validatedAnn = AnnotationUtils.getAnnotation(ann, Validated<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">			<span class="keyword">if</span> (validatedAnn != <span class="keyword">null</span> || ann.annotationType().getSimpleName().startsWith(<span class="string">"Valid"</span>)) &#123;</span><br><span class="line">				Object hints = (validatedAnn != <span class="keyword">null</span> ? validatedAnn.value() : AnnotationUtils.getValue(ann));</span><br><span class="line">				Object[] validationHints = (hints <span class="keyword">instanceof</span> Object[] ? (Object[]) hints : <span class="keyword">new</span> Object[] &#123;hints&#125;);</span><br><span class="line">				binder.validate(validationHints);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Whether to raise a fatal bind exception on validation errors.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> binder the data binder used to perform data binding</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> methodParam the method argument</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; if the next method argument is not of type &#123;<span class="doctag">@link</span> Errors&#125;</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isBindExceptionRequired</span><span class="params">(WebDataBinder binder, MethodParameter methodParam)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> i = methodParam.getParameterIndex();</span><br><span class="line">		Class&lt;?&gt;[] paramTypes = methodParam.getMethod().getParameterTypes();</span><br><span class="line">		boolean hasBindingResult = (paramTypes.length &gt; (i + 1) &amp;&amp; Errors.class.isAssignableFrom(paramTypes[i + 1]));</span><br><span class="line">		<span class="keyword">return</span> !hasBindingResult;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Return &#123;<span class="doctag">@code</span> true&#125; if there is a method-level &#123;<span class="doctag">@code</span> <span class="doctag">@ModelAttribute</span>&#125;</span></span><br><span class="line"><span class="comment">	 * or, in default resolution mode, for any return value type that is not</span></span><br><span class="line"><span class="comment">	 * a simple type.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsReturnType</span><span class="params">(MethodParameter returnType)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (returnType.hasMethodAnnotation(ModelAttribute<span class="class">.<span class="keyword">class</span>) ||</span></span><br><span class="line"><span class="class">				(<span class="title">this</span>.<span class="title">annotationNotRequired</span> &amp;&amp; !<span class="title">BeanUtils</span>.<span class="title">isSimpleProperty</span>(<span class="title">returnType</span>.<span class="title">getParameterType</span>())))</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Add non-null return values to the &#123;<span class="doctag">@link</span> ModelAndViewContainer&#125;.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturnValue</span><span class="params">(Object returnValue, MethodParameter returnType,</span></span></span><br><span class="line"><span class="function"><span class="params">			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (returnValue != <span class="keyword">null</span>) &#123;</span><br><span class="line">			String name = ModelFactory.getNameForReturnValue(returnValue, returnType);</span><br><span class="line">			mavContainer.addAttribute(name, returnValue);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里不具体分析源码，我们知道，该Processor通过supportsParameter判断是否要做数据绑定，通过resolveArgument来处理数据绑定。我们可以自定义一个Processor,来影响Spring的数据绑定逻辑。</p>
+<p>首先，我们定义一个注解，该注解用于指定泛型的具体类型:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.PARAMETER)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> PageParam &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Class <span class="title">paramClazz</span><span class="params">()</span> <span class="keyword">default</span> HashMap.class</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再定义一个Processor，用于实现数据绑定:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> dylan</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2018/10/26</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueryPageArgumentResolver</span> <span class="keyword">extends</span> <span class="title">ModelAttributeMethodProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Class constructor.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> annotationNotRequired if "true", non-simple method arguments and</span></span><br><span class="line"><span class="comment">     *                              return values are considered model attributes with or without a</span></span><br><span class="line"><span class="comment">     *                              &#123;<span class="doctag">@code</span> <span class="doctag">@ModelAttribute</span>&#125; annotation.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">QueryPageArgumentResolver</span><span class="params">(<span class="keyword">boolean</span> annotationNotRequired)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(annotationNotRequired);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">QueryPageArgumentResolver</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span> </span>&#123;</span><br><span class="line">	    <span class="comment">//如果参数打上了PageParam注解，就用此Processor处理</span></span><br><span class="line">        <span class="keyword">return</span> parameter.hasParameterAnnotation(PageParam<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">createAttribute</span><span class="params">(String attributeName, MethodParameter methodParam, WebDataBinderFactory binderFactory, NativeWebRequest request)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//创建对象，实际上是Page对象</span></span><br><span class="line">        Object attribute = BeanUtils.instantiateClass(methodParam.getParameterType());</span><br><span class="line">		<span class="comment">//获取PageParam注解</span></span><br><span class="line">        PageParam pageParam = methodParam.getParameterAnnotation(PageParam<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">		<span class="comment">//获取PageParam注解指定的paramClazz。</span></span><br><span class="line">        Class clazz = pageParam.paramClazz();</span><br><span class="line">		<span class="comment">//通过反射实例化注解的类型，并set到Page对象里。该反射使用了joor反射库。</span></span><br><span class="line">        ((Page)attribute).setParam(Reflect.on(clazz).create().get());</span><br><span class="line">        <span class="keyword">return</span> attribute;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">bindRequestParameters</span><span class="params">(WebDataBinder binder, NativeWebRequest request)</span> </span>&#123;</span><br><span class="line">        ServletRequest servletRequest = request.getNativeRequest(ServletRequest<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        ServletRequestDataBinder servletBinder = (ServletRequestDataBinder) binder;</span><br><span class="line">        servletBinder.bind(servletRequest);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>要让该Processor起作用，需要添加到Spring中，这里用了Spring boot，实现如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebConfiguration</span> <span class="keyword">extends</span> <span class="title">WebMvcConfigurerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addArgumentResolvers</span><span class="params">(List&lt;HandlerMethodArgumentResolver&gt; argumentResolvers)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.addArgumentResolvers(argumentResolvers);</span><br><span class="line">        argumentResolvers.add(<span class="keyword">new</span> QueryPageArgumentResolver());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，Controller就可以这样定义了:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/queryPage"</span>,method = GET)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">queryPage</span><span class="params">(@PageParam(paramClazz = User.class)</span> Page&lt;User&gt; page, Model model)</span>&#123;</span><br><span class="line">	List&lt;User&gt; users = userService.queryPage(page);</span><br><span class="line">	model.addAttribute(<span class="string">"page"</span>,page);</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"users"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们发起请求时，主要参数带有param.addr，地址就可以正确绑定到泛型里的User对象下。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/12/ddd_vo_and_entity/" rel="next" title="DDD:实体和值对象">
+                <i class="fa fa-chevron-left"></i> DDD:实体和值对象
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/05/concurrency_disagress_read/" rel="prev" title="并发:不一致读带来的问题">
+                并发:不一致读带来的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTEzNi8xNTY2Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Dylan" />
+            
+              <p class="site-author-name" itemprop="name">Dylan</p>
+              <p class="site-description motion-element" itemprop="description">以往不再，未来没来</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pickear" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pickear@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+		  
+		  
+			<div class="links-of-blogroll motion-element links-of-blogroll-block">
+			  <div class="links-of-blogroll-title">
+				<!-- modify icon to fire by szw -->
+				<i class="fa fa-history fa-" aria-hidden="true"></i>
+				最新文章
+			  </div>
+			  <ul class="links-of-blogroll-list">
+				
+				
+				  <li>
+					<a href="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" title="Hexo博客：(8)Travis CI自动化编译发布" target="_blank">Hexo博客：(8)Travis CI自动化编译发布</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" title="开源工具集绵" target="_blank">开源工具集绵</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" title="Hexo博客：(7)给NexT主题添加最新文章模块" target="_blank">Hexo博客：(7)给NexT主题添加最新文章模块</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/11/05/concurrency_disagress_read/" title="并发:不一致读带来的问题" target="_blank">并发:不一致读带来的问题</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/10/26/spring-controller-generic/" title="Spring 控制器泛型化参数" target="_blank">Spring 控制器泛型化参数</a>
+				  </li>
+				
+			  </ul>
+			</div>
+		  
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#泛型的作用"><span class="nav-number">1.</span> <span class="nav-text">泛型的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数泛型化"><span class="nav-number">2.</span> <span class="nav-text">参数泛型化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解决"><span class="nav-number">3.</span> <span class="nav-text">如何解决</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan 版权所有 粤ICP备18080701号</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dDRzyTmQVCxeR8rMT6f5cmxT-gzGzoHsz", "ca49g09mFXh5lV0qx7c5lbQE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

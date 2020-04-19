@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="并发,不一致读," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;关于并发时的不一致读，在前面一篇文章 &lt;并发的思考&gt;有粗略读过。在这里，用一篇文章的篇幅来展开读读这个问题。因为这个问题很普遍，也是很多人会忽略的。首先，用一个时序图开呈现不一致读的产生:  &amp;emsp;&amp;emsp;首先，A和B先后读取了customer信息并且进行编辑。A在编辑完提交时，B已经完成了编辑和提交。这种情况下，因为B的提交对A是不可见的，所以A最后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发:不一致读带来的问题">
+<meta property="og:url" content="http://yoursite.com/2018/11/05/concurrency_disagress_read/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;关于并发时的不一致读，在前面一篇文章 &lt;并发的思考&gt;有粗略读过。在这里，用一篇文章的篇幅来展开读读这个问题。因为这个问题很普遍，也是很多人会忽略的。首先，用一个时序图开呈现不一致读的产生:  &amp;emsp;&amp;emsp;首先，A和B先后读取了customer信息并且进行编辑。A在编辑完提交时，B已经完成了编辑和提交。这种情况下，因为B的提交对A是不可见的，所以A最后">
+<meta property="og:image" content="http://yoursite.com/images/blog/concurrency_disagree_1.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/concurrency_disagree_2.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/concurrency_disagree_3.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/concurrency_disagree_4.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/concurrency_disagree_5.png">
+<meta property="article:published_time" content="2018-11-05T15:32:00.000Z">
+<meta property="article:modified_time" content="2020-04-19T01:44:22.639Z">
+<meta property="article:author" content="Dylan">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="不一致读">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/blog/concurrency_disagree_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/05/concurrency_disagress_read/"/>
+
+
+
+
+
+  <title>并发:不一致读带来的问题 | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/05/concurrency_disagress_read/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dylan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">并发:不一致读带来的问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-05T15:32:00+00:00">
+                2018-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">软件设计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/05/concurrency_disagress_read/" class="leancloud_visitors" data-flag-title="并发:不一致读带来的问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;关于并发时的不一致读，在前面一篇文章 <a href="/2018/10/07/thinking_in_concurrency/#more">&lt;并发的思考&gt;</a>有粗略读过。在这里，用一篇文章的篇幅来展开读读这个问题。因为这个问题很普遍，也是很多人会忽略的。首先，用一个时序图开呈现不一致读的产生:</p>
+<p><img src="/images/blog/concurrency_disagree_1.png" alt="图片1"></p>
+<p>&emsp;&emsp;首先，A和B先后读取了customer信息并且进行编辑。A在编辑完提交时，B已经完成了编辑和提交。这种情况下，因为B的提交对A是不可见的，所以A最后的提交会覆盖B的提交。出现这个问题的原因，是因为最后提交者不是基于最新的数据进行编辑提交。解决这个问题的最本质方法是，要么后提交者放弃提交，要么重新基于最新数据进行编辑再提交。下面，介绍几种方法避免这个问题的产生。</p>
+<h3 id="提交时拒绝"><a href="#提交时拒绝" class="headerlink" title="提交时拒绝"></a>提交时拒绝</h3><p>&emsp;&emsp;这种方式也被martin fowler乐观离线锁，就是乐观地认为冲突不会发生，到最后真的发生了再处理。首先，为每一份数据定义一个版本号version。<br>每一次对数据的更新都基于获取数据时的版本号，并且在更新的同时版本号加1.下面是一个更新的SQL:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE customer SET name=customer.name,SET version=version+1 WHERE id=customer.id and version=customer.version</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里解释一下这条SQL为什么能避免不一致读问题带来的后果。首先，A,B先后读取了customer的信息，此时，customer的版本号version=1。在B编辑完提交编辑结果时，由于在这之前没有人对数据更新了修改，此时版本号version还是1。当B更新成功后，版本号version=2。此时，由于B已经将version改成了2，A再提交编辑后，更新失败，update的SQL返回0(代表没有更新到数据)。当update语句返回的是0而不是1的时候，程序可以抛一个异常让A的事务回滚，或者做一些其他处理通知A数据不是最新的的，重新加载数据再处理。</p>
+<p>&emsp;&emsp;如果觉得每一个表都添加一个version字段不好，可以修改UPDATE语句如下:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE customer SET name=customer.name,SET password=customer.password WHERE id=customer.id and name=oldcustomer.name and oldcustomer.password</span><br></pre></td></tr></table></figure>
+<p>要修改什么属性的值，就在WHERE语句添加该属性条件判断。如果属性之前被修改过，条件判断就不成立，更新就失败。这种方式还是没有添加version属性简单方便。</p>
+<p><img src="/images/blog/concurrency_disagree_2.png" alt="图片2"></p>
+<p>&emsp;&emsp;提交时拒绝这种处理方式有个不好的地方，当A在编辑时做了很多的修改，当提交的时候才告诉A提交失败，让A重新加载数据再编辑，对A来说是一件很抓狂的事。当然，在程序上也可以做一些处理，保存A所做的修改，冲突时提示A哪里地方和新的数据有冲突，让A决定如何做。不过，这样也让程序变得更加复杂。并且，如果此类事件频繁发现，对A来说是绝望的。所以这种方式比较适合冲突比较少的情况，如果冲突频繁发生，这种方式就不是很友好了。</p>
+<h3 id="读取时拒绝"><a href="#读取时拒绝" class="headerlink" title="读取时拒绝"></a>读取时拒绝</h3><p>&emsp;&emsp;做了很多事情，到最后被告知都是徒劳，其实是一件让人难以接受的事，特别是还频繁发生。那么我们是否可以，既然注定失败，那就让失败来得更早些？那就是接下来要讲的，读取时拒绝，也就是悲观离线锁。当数据被A读取之后，B就不能再读取。</p>
+<p><img src="/images/blog/concurrency_disagree_3.png" alt="图片3"></p>
+<p>&emsp;&emsp;我们可以用锁的方式来实现A读取之后不让任何人再读取。首先，A在读取的时候先要获取一把锁，如果锁获取成功，就允许读取。A持有这把锁直到修改完数据成功提交后再释放。在此期间，B想读取数据，因为无法获取到锁而失败。由于A持有锁可能时间会比较久，所以为了不影响其他人读取其他数据，锁的粒度一定要小，只锁定特定的行数据，不能将整个表数据锁定。这种获取锁的方式可以用分布式锁，也可以用后面介绍的数据库表方式控制锁。</p>
+<p>&emsp;&emsp;读取时拒绝的好处是让用户不用丢弃已经完成的工作。那么，读取时拒绝有哪些不好的地方。试想一下，当A获取了数据打开了编辑，此时A由于其他事情走开了，长期没有提交编辑，由于A长时间持有锁不释放，导致对这条数据的编辑长时间不可用，这样就会给用户一种系统长时间崩溃的感觉。所以，读取时拒绝适用于冲突率很高的并发会话，或者冲突处理代价很高的情况下。读取时拒绝只是作为提交时拒绝的一个补充，在真正需要的时候才使用。</p>
+<h3 id="数据改变时提醒"><a href="#数据改变时提醒" class="headerlink" title="数据改变时提醒"></a>数据改变时提醒</h3><p>&emsp;&emsp;提交时拒绝和读取时拒绝都有各自的适用场景，也都有各自好和不好的地方。是否有一种相对更折衷的方式，不会让用户在最后提交时才知道冲突了，或者不会因为别人读取了数据我连读取的权限都没有了，毕竟，我可能只是想看数据，并没有计划编辑数据。那就是DDD里面提到的事件驱动，对数据的增删改，都会抛出一个相应的事件。事件发生后，由事件监听器决定做相应的处理。</p>
+<p><img src="/images/blog/concurrency_disagree_4.png" alt="图片4"></p>
+<p>&emsp;&emsp;首先，B对数据修改成功后，抛出一个ModifiedEvent(数据已修改)事件。事件监听器接收到数据已经被修改，就通知A，让A决定是否要加载新数据，或者将修改后的数据与A编辑的数据做一个冲突比较，让A决定使用哪一个版本的数据。在A提交前就已经感知数据的变化，并做出了决定，那么在A提交修改后，就可以直接更新数据，而不需要使用version来让A在提交时失败了。那么如果通知A数据已经改变了，如果是了个WEB应用，A已经将数据加载到页面上，如何通知A呢？可以在页面上做一个定时器，定时到后端检查数据有没有改变。也可以用websocket的方式持有一个长连接，当数据被修改时让后端主动通知。如果有其他的方式，也可以采用。</p>
+<h3 id="共享的乐观离线锁"><a href="#共享的乐观离线锁" class="headerlink" title="共享的乐观离线锁"></a>共享的乐观离线锁</h3><p>&emsp;&emsp;有时候，修改数据并不单单是修改一个表一个实体，而是会修改多个表多个实体，那么，要怎么通过version来避免不一致读的问题？例如要修改用户信息，用户是由Customer和Address组成。是不是Customer和Address都各自有一个verion？还是Address共用Customer的version，用一个粗粒度的锁同时锁住Customer和Address？粗粒度锁覆盖多个对象的单个锁，简化加锁本身，也可以让你不必为给它们加锁而加载所有对象。</p>
+<p>&emsp;&emsp;在DDD中提到了聚合的概念。Customer和Address其实是属于同一个聚合，Customer是聚合根，Adress是该聚合里面的值对象。对于聚合外面来说，只能依赖聚合根，要访问聚合根内部的对象，都只能通过聚合根提供接口。这就保证了聚合里面的对象，不会分散到系统各个地方而难以控制。粗粒度锁只要锁住聚合根，就能够锁住整个聚合的对象。</p>
+<p><img src="/images/blog/concurrency_disagree_5.png" alt="图片5"></p>
+<p>&emsp;&emsp;首先创建一个version表:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE version(id bigint primary key,value bigint);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;定义一个Version类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Version</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Long id;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">long</span> value;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">boolean</span> isNew;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Version <span class="title">create</span><span class="params">()</span></span>&#123;</span><br><span class="line">		Version version = <span class="keyword">new</span> Version(IdGenerator.nextId(),<span class="number">0</span>);</span><br><span class="line">		version.isNew = <span class="keyword">true</span>;</span><br><span class="line">		<span class="keyword">return</span> version;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(isNew())&#123;</span><br><span class="line">			<span class="comment">//这里执行数据库的插入操作，生成version记录。</span></span><br><span class="line">			<span class="comment">//INSERT INTO version(id,value) value(id,value)</span></span><br><span class="line">			</span><br><span class="line">			isNew = <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">increment</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">//这里更新version记录，记value加1</span></span><br><span class="line">		<span class="comment">//UPDATE SET value=value+1 WHERE id=id and value=value;</span></span><br><span class="line">		<span class="comment">//执行update语句后会返回一个int类型的返回值，代表被更新的记录数，这里例如返回值变量为rowCount</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(rowCount == <span class="number">0</span>)&#123;   <span class="comment">//说明版本已经被改变</span></span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"数据已被改变"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		value++;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Entity</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Long id;</span><br><span class="line">	<span class="keyword">private</span> Version version;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span> <span class="keyword">extends</span> <span class="title">Entity</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">	<span class="keyword">private</span> List&lt;Address&gt; address = <span class="keyword">new</span> ArrayList();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Customer <span class="title">create</span><span class="params">(String name,String password)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Customer(IdGenerator.nextId(),Version.create(),name,password);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addAddress</span><span class="params">(String city)</span></span>&#123;</span><br><span class="line">		Address address = Address.create(<span class="keyword">this</span>,city);</span><br><span class="line">		<span class="keyword">this</span>.address.add(address);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> <span class="keyword">extends</span> <span class="title">Entity</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Long customerId;</span><br><span class="line">	<span class="keyword">private</span> String city;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Address <span class="title">create</span><span class="params">(Customer customer,String city)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Address(IdGenerator.nextId(),customer.getVersion(),customer.getId(),city);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomerRepository</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Customer customer)</span></span>&#123;</span><br><span class="line">		customer.getVersion().insert();   <span class="comment">//首先在版本号表插入版本记录</span></span><br><span class="line">		<span class="comment">//再插入Customer信息</span></span><br><span class="line">		<span class="comment">//.......</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Customer customer)</span></span>&#123;</span><br><span class="line">		customer.getVersion().increment();  <span class="comment">//首先先将版本号加1,如果成功，说明数据没被修改过。</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//再更新Customer信息</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(Customer customer)</span></span>&#123;</span><br><span class="line">		<span class="comment">//1.先删除所有该Customer的Address数据</span></span><br><span class="line">		<span class="comment">//2.删除Customer数据</span></span><br><span class="line">		<span class="comment">//3.删除version表数据</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+          
+            <a href="/tags/%E4%B8%8D%E4%B8%80%E8%87%B4%E8%AF%BB/" rel="tag"># 不一致读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/26/spring-controller-generic/" rel="next" title="Spring 控制器泛型化参数">
+                <i class="fa fa-chevron-left"></i> Spring 控制器泛型化参数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" rel="prev" title="Hexo博客：(7)给NexT主题添加最新文章模块">
+                Hexo博客：(7)给NexT主题添加最新文章模块 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTEzNi8xNTY2Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Dylan" />
+            
+              <p class="site-author-name" itemprop="name">Dylan</p>
+              <p class="site-description motion-element" itemprop="description">以往不再，未来没来</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pickear" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pickear@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+		  
+		  
+			<div class="links-of-blogroll motion-element links-of-blogroll-block">
+			  <div class="links-of-blogroll-title">
+				<!-- modify icon to fire by szw -->
+				<i class="fa fa-history fa-" aria-hidden="true"></i>
+				最新文章
+			  </div>
+			  <ul class="links-of-blogroll-list">
+				
+				
+				  <li>
+					<a href="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" title="Hexo博客：(8)Travis CI自动化编译发布" target="_blank">Hexo博客：(8)Travis CI自动化编译发布</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" title="开源工具集绵" target="_blank">开源工具集绵</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" title="Hexo博客：(7)给NexT主题添加最新文章模块" target="_blank">Hexo博客：(7)给NexT主题添加最新文章模块</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/11/05/concurrency_disagress_read/" title="并发:不一致读带来的问题" target="_blank">并发:不一致读带来的问题</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/10/26/spring-controller-generic/" title="Spring 控制器泛型化参数" target="_blank">Spring 控制器泛型化参数</a>
+				  </li>
+				
+			  </ul>
+			</div>
+		  
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#提交时拒绝"><span class="nav-number">1.</span> <span class="nav-text">提交时拒绝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读取时拒绝"><span class="nav-number">2.</span> <span class="nav-text">读取时拒绝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据改变时提醒"><span class="nav-number">3.</span> <span class="nav-text">数据改变时提醒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#共享的乐观离线锁"><span class="nav-number">4.</span> <span class="nav-text">共享的乐观离线锁</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan 版权所有 粤ICP备18080701号</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dDRzyTmQVCxeR8rMT6f5cmxT-gzGzoHsz", "ca49g09mFXh5lV0qx7c5lbQE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="seafile,私有云," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言最近，云盘关闭得比较多，曾经许多高调宣称永久的云盘，最后还是说关就关，目前只有百度云盘还算坚挺。云盘一旦关闭，云盘上的资源搬迁给我们带来了很多的烦恼。所以，搭建一个自己的私有云盘还是有必要。 开源免费的云盘有很多，比如：NextCloud,OwnCloud,seafile,minio等。这里，我们使用国产的seafile。seafile使用加密的方式存储，并且客户端也比较丰富。 安装 下载首先">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树莓派：(3)用seafile搭建私有云">
+<meta property="og:url" content="http://yoursite.com/2018/09/03/%E8%8E%93%E6%B4%BE%EF%BC%9A-3-%E7%94%A8seafile%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BA%91/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="前言最近，云盘关闭得比较多，曾经许多高调宣称永久的云盘，最后还是说关就关，目前只有百度云盘还算坚挺。云盘一旦关闭，云盘上的资源搬迁给我们带来了很多的烦恼。所以，搭建一个自己的私有云盘还是有必要。 开源免费的云盘有很多，比如：NextCloud,OwnCloud,seafile,minio等。这里，我们使用国产的seafile。seafile使用加密的方式存储，并且客户端也比较丰富。 安装 下载首先">
+<meta property="og:image" content="http://yoursite.com/images/blog/seafile_login.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/seafile_index.png">
+<meta property="article:published_time" content="2018-09-03T16:44:00.000Z">
+<meta property="article:modified_time" content="2020-04-19T01:44:22.639Z">
+<meta property="article:author" content="Dylan">
+<meta property="article:tag" content="seafile">
+<meta property="article:tag" content="私有云">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/blog/seafile_login.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/03/莓派：-3-用seafile搭建私有云/"/>
+
+
+
+
+
+  <title>树莓派：(3)用seafile搭建私有云 | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/03/%E8%8E%93%E6%B4%BE%EF%BC%9A-3-%E7%94%A8seafile%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BA%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dylan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">树莓派：(3)用seafile搭建私有云</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-03T16:44:00+00:00">
+                2018-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E7%B2%B9/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂粹</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/09/03/%E8%8E%93%E6%B4%BE%EF%BC%9A-3-%E7%94%A8seafile%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BA%91/" class="leancloud_visitors" data-flag-title="树莓派：(3)用seafile搭建私有云">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近，云盘关闭得比较多，曾经许多高调宣称永久的云盘，最后还是说关就关，目前只有百度云盘还算坚挺。云盘一旦关闭，云盘上的资源搬迁给我们带来了很多的烦恼。所以，搭建一个自己的私有云盘还是有必要。</p>
+<p>开源免费的云盘有很多，比如：NextCloud,OwnCloud,seafile,minio等。这里，我们使用国产的seafile。seafile使用加密的方式存储，并且客户端也比较丰富。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><ol>
+<li><p>下载<br>首先，下载seafile到树莓派本地。<a href="https://github.com/haiwen/seafile-rpi/releases/download/v6.2.5/seafile-server_6.2.5_stable_pi.tar.gz" target="_blank" rel="noopener">seafile下载</a></p>
+</li>
+<li><p>解压</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /mnt/hd/seafile</span><br><span class="line">mv seafile-server_6.2.5_stable_pi.tar.gz /mnt/hd/seafile</span><br><span class="line">cd /mnt/hd/seafile</span><br><span class="line">tar -xzf seafile-server_6.2.5_stable_pi.tar.gz</span><br><span class="line">mkdir installed</span><br><span class="line">mv seafile-server_6.2.5_stable_pi.tar.gz installed</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>安装依赖</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get update</span><br><span class="line">apt-get install python2.7 libpython2.7 python-setuptools python-imaging python-ldap python-urllib3 sqlite3 python-requests</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd seafile-server_6.2.5</span><br><span class="line"><span class="meta">#</span><span class="bash">运行安装脚本并回答预设问题按时提示，在安装过程中会要求输入服务名，ip，端口，管理员邮箱，管理员密码等信息</span></span><br><span class="line">./setup-seafile.sh</span><br></pre></td></tr></table></figure>
+<p>安装完之后，seafile的目录结构如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">├── conf # configuration files</span><br><span class="line">│ ├── ccnet.conf</span><br><span class="line">│ └── seafile.conf</span><br><span class="line">│ └── seahub_settings.py</span><br><span class="line">│ └── seafdav.conf</span><br><span class="line">├── ccnet</span><br><span class="line">│ ├── mykey.peer</span><br><span class="line">│ ├── PeerMgr</span><br><span class="line">│ └── seafile.ini</span><br><span class="line">├── installed</span><br><span class="line">│ └── seafile-server_6.2.5_stable_pi.tar.gz</span><br><span class="line">├── seafile-data</span><br><span class="line">├── seafile-server-6.2.5# active version</span><br><span class="line">│ ├── reset-admin.sh</span><br><span class="line">│ ├── runtime</span><br><span class="line">│ ├── seafile</span><br><span class="line">│ ├── seafile.sh</span><br><span class="line">│ ├── seahub</span><br><span class="line">│ ├── seahub.sh</span><br><span class="line">│ ├── setup-seafile.sh</span><br><span class="line">│ └── upgrade</span><br><span class="line">├── seafile-server-latest # symbolic link to seafile-server-6.2.5</span><br><span class="line">├── seahub-data</span><br><span class="line">│ └── avatars</span><br><span class="line">├── seahub.db</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>启动</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./seafile.sh start # 启动 Seafile 服务</span><br><span class="line">./seahub.sh start # 启动 Seahub 网站 （默认运行在8000端口上）</span><br></pre></td></tr></table></figure>
+<p>如果运行没出错，打开浏览器，访问 <a href="http://ip:8000" target="_blank" rel="noopener">http://ip:8000</a> ，通过用户密码就可以登录seafile。<br><img src="/images/blog/seafile_login.png" alt="seafile_login"></p>
+<p><img src="/images/blog/seafile_index.png" alt="seafile_index"></p>
+<ol start="7">
+<li>使用nginx</li>
+</ol>
+<p>首先，我们先创建一个link指向/mnt/hd/seafile/seafile-server-6.2.5</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /mnt/hd/seafile/seafile-server-6.2.5 /mnt/hd/seafile/seafile-server-latest</span><br></pre></td></tr></table></figure>
+<p>在nginx的配置文件添加以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name cloud.gogl.top;</span><br><span class="line">    proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">    location &#x2F; &#123;</span><br><span class="line">         proxy_pass         http:&#x2F;&#x2F;127.0.0.1:8000;</span><br><span class="line">         proxy_set_header   Host $host;</span><br><span class="line">         proxy_set_header   X-Real-IP $remote_addr;</span><br><span class="line">         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">         proxy_set_header   X-Forwarded-Host $server_name;</span><br><span class="line">         proxy_read_timeout  1200s;</span><br><span class="line">         # used for view&#x2F;edit office file via Office Online Server</span><br><span class="line">         client_max_body_size 0;</span><br><span class="line">         access_log      &#x2F;var&#x2F;log&#x2F;nginx&#x2F;seahub.access.log;</span><br><span class="line">         error_log       &#x2F;var&#x2F;log&#x2F;nginx&#x2F;seahub.error.log;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location &#x2F;seafhttp &#123;</span><br><span class="line">        rewrite ^&#x2F;seafhttp(.*)$ $1 break;</span><br><span class="line">        proxy_pass http:&#x2F;&#x2F;127.0.0.1:8082;</span><br><span class="line">        client_max_body_size 0;</span><br><span class="line">        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_connect_timeout  36000s;</span><br><span class="line">        proxy_read_timeout  36000s;</span><br><span class="line">        proxy_send_timeout  36000s;</span><br><span class="line">        send_timeout  36000s;</span><br><span class="line">    &#125;</span><br><span class="line">    location &#x2F;media &#123;</span><br><span class="line">        root &#x2F;mnt&#x2F;hd&#x2F;seafile&#x2F;seafile-server-latest&#x2F;seahub;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新加载nginx配置文件后，打开浏览器，访问 <a href="http://ip:80" target="_blank" rel="noopener">http://ip:80</a> 即可。</p>
+<h3 id="将seafile映射到外网"><a href="#将seafile映射到外网" class="headerlink" title="将seafile映射到外网"></a>将seafile映射到外网</h3><p>如果私有云能在外网直接访问，对于上传和下载文件将非常方便，也可以将文件分享给别人下载。这里，也是用frp来内网穿透，更多内容，请看<a href="http://tun.gogl.top" target="_blank" rel="noopener">FRP外网穿透</a> 或者 <a href="https://github.com/fatedier/frp" target="_blank" rel="noopener">FRP官方</a>。下面的配置<a href="http://www.xxx.com表示自己的域名。" target="_blank" rel="noopener">www.xxx.com表示自己的域名。</a></p>
+<ol>
+<li>配置外网FRP服务端(frps.ini)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_addr &#x3D; 0.0.0.0</span><br><span class="line">bind_port &#x3D; 5000</span><br><span class="line">log_file &#x3D; .&#x2F;logs&#x2F;frps.log</span><br><span class="line">log_level &#x3D; debug</span><br><span class="line">log_max_days &#x3D; 2</span><br><span class="line">vhost_http_port &#x3D; 5001</span><br><span class="line">vhost_https_port &#x3D; 5002</span><br><span class="line">dashboard_port &#x3D; 5003</span><br><span class="line">dashboard_user &#x3D; admin</span><br><span class="line">dashboard_pwd &#x3D; xxxxxxx</span><br><span class="line">privilege_mode &#x3D; false</span><br><span class="line">privilege_allow_ports &#x3D; 8000-9999</span><br><span class="line">max_pool_count &#x3D; 30</span><br><span class="line">authentication_timeout &#x3D; 100</span><br><span class="line"></span><br><span class="line">[1457918659]</span><br><span class="line">type &#x3D; http</span><br><span class="line">auth_token &#x3D; 111111</span><br><span class="line">bind_addr &#x3D; 0.0.0.0</span><br><span class="line">listen_port &#x3D; 8003</span><br><span class="line">custom_domains &#x3D; www.xxx.com</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>配置内网树莓派FRP客户端服务(frpc.ini)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr &#x3D; xxx.xxx.xxx  ##服务端ip</span><br><span class="line">server_port &#x3D; 5000  ##服务端ip</span><br><span class="line">log_level &#x3D; error</span><br><span class="line">log_file &#x3D; &#x2F;mnt&#x2F;hd&#x2F;frpc&#x2F;logs&#x2F;frpc.log</span><br><span class="line">auth_token &#x3D; 111111  ##服务商设置的令牌</span><br><span class="line"></span><br><span class="line">[1457918659]</span><br><span class="line">type &#x3D; http</span><br><span class="line">local_ip &#x3D; 127.0.0.1</span><br><span class="line">local_port &#x3D; 80</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>配置外网服务器nginx<br>在外网服务器(即frp服务端的服务器)配置nginx，添加以下内容：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  www.xxx.com;</span><br><span class="line">        proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">        location &#x2F; &#123;</span><br><span class="line">            proxy_pass         http:&#x2F;&#x2F;127.0.0.1:5001;</span><br><span class="line">            proxy_set_header   Host $host;</span><br><span class="line">            proxy_set_header   X-Real-IP $remote_addr;</span><br><span class="line">            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">            proxy_set_header   X-Forwarded-Host $server_name;</span><br><span class="line">            proxy_read_timeout  36000s;</span><br><span class="line">            proxy_connect_timeout    36000s;</span><br><span class="line">            proxy_send_timeout       36000s;</span><br><span class="line">            send_timeout             36000s;</span><br><span class="line">            # used for view&#x2F;edit office file via Office Online Server</span><br><span class="line">            client_max_body_size 0;</span><br><span class="line">            access_log      &#x2F;usr&#x2F;local&#x2F;application&#x2F;nginx&#x2F;logs&#x2F;seahub.access.log;</span><br><span class="line">            error_log       &#x2F;usr&#x2F;local&#x2F;application&#x2F;nginx&#x2F;logs&#x2F;seahub.error.log;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>重新加载nginx配置文件后，打开浏览器，访问 http:<a href="http://www.xxx.com，就可以在外网登录你的私有云了。" target="_blank" rel="noopener">www.xxx.com，就可以在外网登录你的私有云了。</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/seafile/" rel="tag"># seafile</a>
+          
+            <a href="/tags/%E7%A7%81%E6%9C%89%E4%BA%91/" rel="tag"># 私有云</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/02/%E6%A0%91%E8%8E%93%E6%B4%BE%EF%BC%9A-2-%E5%AE%89%E8%A3%85filebrower/" rel="next" title="树莓派：(2)安装filebrower">
+                <i class="fa fa-chevron-left"></i> 树莓派：(2)安装filebrower
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/07/build_golang/" rel="prev" title="编译golang">
+                编译golang <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTEzNi8xNTY2Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Dylan" />
+            
+              <p class="site-author-name" itemprop="name">Dylan</p>
+              <p class="site-description motion-element" itemprop="description">以往不再，未来没来</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pickear" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pickear@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+		  
+		  
+			<div class="links-of-blogroll motion-element links-of-blogroll-block">
+			  <div class="links-of-blogroll-title">
+				<!-- modify icon to fire by szw -->
+				<i class="fa fa-history fa-" aria-hidden="true"></i>
+				最新文章
+			  </div>
+			  <ul class="links-of-blogroll-list">
+				
+				
+				  <li>
+					<a href="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" title="Hexo博客：(8)Travis CI自动化编译发布" target="_blank">Hexo博客：(8)Travis CI自动化编译发布</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" title="开源工具集绵" target="_blank">开源工具集绵</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" title="Hexo博客：(7)给NexT主题添加最新文章模块" target="_blank">Hexo博客：(7)给NexT主题添加最新文章模块</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/11/05/concurrency_disagress_read/" title="并发:不一致读带来的问题" target="_blank">并发:不一致读带来的问题</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/10/26/spring-controller-generic/" title="Spring 控制器泛型化参数" target="_blank">Spring 控制器泛型化参数</a>
+				  </li>
+				
+			  </ul>
+			</div>
+		  
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将seafile映射到外网"><span class="nav-number">3.</span> <span class="nav-text">将seafile映射到外网</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan 版权所有 粤ICP备18080701号</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dDRzyTmQVCxeR8rMT6f5cmxT-gzGzoHsz", "ca49g09mFXh5lV0qx7c5lbQE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

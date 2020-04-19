@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="hexo,Travis CI," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前面有介绍过通过hexo d 命令来发布博文到github，到目前为主，前面的文章的前提是要自己有服务器。这篇文章将介绍，在没有服务器的前提下，怎么通过提交原码到github，用traci-ci持续集成工具自动编译发布博文。这些都将是全自动的，只要将博文提交到github就会自动发布。 (1)创建${username}.github.io仓库前面的文章 Hexo博客：(3)上传到github 已经">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo博客：(8)Travis CI自动化编译发布">
+<meta property="og:url" content="http://yoursite.com/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="前面有介绍过通过hexo d 命令来发布博文到github，到目前为主，前面的文章的前提是要自己有服务器。这篇文章将介绍，在没有服务器的前提下，怎么通过提交原码到github，用traci-ci持续集成工具自动编译发布博文。这些都将是全自动的，只要将博文提交到github就会自动发布。 (1)创建${username}.github.io仓库前面的文章 Hexo博客：(3)上传到github 已经">
+<meta property="og:image" content="http://yoursite.com/images/blog/github_token1.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/github_token2.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/travis-ci_login.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/travis-ci_settings.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/travis-ci_repositeries.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/travis-ci_repositories_settings.png">
+<meta property="og:image" content="http://yoursite.com/images/blog/pickear.github.io.png">
+<meta property="article:published_time" content="2020-04-19T07:44:00.000Z">
+<meta property="article:modified_time" content="2020-04-19T01:44:22.639Z">
+<meta property="article:author" content="Dylan">
+<meta property="article:tag" content="hexo">
+<meta property="article:tag" content="Travis CI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/blog/github_token1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/19/Hexo博客：-8-Travis CI自动化编译发布/"/>
+
+
+
+
+
+  <title>Hexo博客：(8)Travis CI自动化编译发布 | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dylan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hexo博客：(8)Travis CI自动化编译发布</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-19T07:44:00+00:00">
+                2020-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E6%9D%82%E7%B2%B9/" itemprop="url" rel="index">
+                    <span itemprop="name">技术杂粹</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" class="leancloud_visitors" data-flag-title="Hexo博客：(8)Travis CI自动化编译发布">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面有介绍过通过<a href="https://pickear.github.io/2018/08/23/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-3-%E4%B8%8A%E4%BC%A0%E5%88%B0github/" target="_blank" rel="noopener">hexo d</a> 命令来发布博文到github，到目前为主，前面的文章的前提是要自己有服务器。这篇文章将介绍，在没有服务器的前提下，怎么通过提交原码到github，用traci-ci持续集成工具自动编译发布博文。这些都将是全自动的，只要将博文提交到github就会自动发布。</p>
+<h4 id="1-创建-username-github-io仓库"><a href="#1-创建-username-github-io仓库" class="headerlink" title="(1)创建${username}.github.io仓库"></a>(1)创建${username}.github.io仓库</h4><p>前面的文章 <a href="https://pickear.github.io/2018/08/23/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-3-%E4%B8%8A%E4%BC%A0%E5%88%B0github/" target="_blank" rel="noopener">Hexo博客：(3)上传到github</a> 已经介绍过如何注册github和创建username.github.io仓库(其中username为github的帐号名，比如你的github帐号为pickear，那仓库为pickear.github.io，这是固定的)</p>
+<h4 id="2-创建hexo分支"><a href="#2-创建hexo分支" class="headerlink" title="(2)创建hexo分支"></a>(2)创建hexo分支</h4><p>将username.github.io这个仓库checkout到本地。然后用打开命令提示符，进入仓库的要目录，用git命令创建并切换到hexo分支。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b hexo</span><br></pre></td></tr></table></figure>
+<h4 id="3-添加hexo源码"><a href="#3-添加hexo源码" class="headerlink" title="(3)添加hexo源码"></a>(3)添加hexo源码</h4><p>首先初始化hexo，具体请看博文 <a href="https://pickear.github.io/2018/08/22/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-1-%E5%AE%89%E8%A3%85/" target="_blank" rel="noopener">Hexo博客：(1)安装</a> 。初始化完后，将hexo博客的源码拷贝到pickear.github.io仓库下，目录如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pickear.github.io</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br></pre></td></tr></table></figure>
+<p>拷贝完后，用git add命令将所有源码文件添加到git，并用git commit命令提交到本地仓库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m "初始化博客"</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-github创建token"><a href="#4-github创建token" class="headerlink" title="(4)github创建token"></a>(4)github创建token</h4><p>travis-ci要获取github的源码编译并将编译后的博文提交到pickear.github.io的master分支上，就需要github的相关权限。这里创建token就是给travis-ci使用的。在github的右上角帐号处Settings/Developer settings/Personal access tokens处通过”Generate new token”创建一个token。并记录下创建的token，因为以后是无法再显示了，只能重新创建。<br><img src="/images/blog/github_token1.png" alt="图片"></p>
+<p><img src="/images/blog/github_token2.png" alt="图片"></p>
+<h4 id="5-登录travis-ci"><a href="#5-登录travis-ci" class="headerlink" title="(5)登录travis-ci"></a>(5)登录travis-ci</h4><p>访问<a href="https://www.travis-ci.org/" target="_blank" rel="noopener">travis-ci 官网</a> 并通过github授权登录travis-ci。</p>
+<p><img src="/images/blog/travis-ci_login.png" alt="图片"></p>
+<h4 id="6-同步仓库到travis-ci"><a href="#6-同步仓库到travis-ci" class="headerlink" title="(6)同步仓库到travis-ci"></a>(6)同步仓库到travis-ci</h4><p>在travis-ci的右上角帐号处，通过Settings可以看到所有github的仓库。如果看不到，可以通过左边的Sync acount来进行同步。然后在想要自动化编译的仓库处打开右边的开关。<br><img src="/images/blog/travis-ci_settings.png" alt="图片"><br>之后在My Repositories就可以看到需要编译的仓库。<br><img src="/images/blog/travis-ci_repositeries.png" alt="图片"></p>
+<h4 id="7-设置travis-ci仓库"><a href="#7-设置travis-ci仓库" class="headerlink" title="(7)设置travis-ci仓库"></a>(7)设置travis-ci仓库</h4><p>在My Repositories 选择pickear/pickear.github.io这个仓库。然后点右边的More options/Settings对仓库进行设置。创建GH_TOKEN变量，并将前面创建github的token作为变量值填进去。这个GH_TOKEN将在.travis.yml(travis-ci的编译配置文件，后面讲到)。<br><img src="/images/blog/travis-ci_repositories_settings.png" alt="图片"></p>
+<h4 id="8-创建-travis-yml"><a href="#8-创建-travis-yml" class="headerlink" title="(8)创建.travis.yml"></a>(8)创建.travis.yml</h4><p>在本地仓库的要目录下，创建.travis.yml文件。文件里有个GH_TOKEN变量，就是上一步骤在travis-ci的仓库settings添加的GH_TOKEN变量。这里不直接将token写在.travis.yml是为了防止泄露，因为这个文件将上传到github上，所有人都可以看到。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">language: node_js</span><br><span class="line">node_js: stable</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定缓存模块，可选。缓存可加快编译速度。</span></span><br><span class="line">cache:</span><br><span class="line">  apt: true</span><br><span class="line">  yarn: true</span><br><span class="line">  directories:</span><br><span class="line">    - node_modules</span><br><span class="line">  </span><br><span class="line">before_install:</span><br><span class="line">    #此处的user.name的值请改为自己的github用户名</span><br><span class="line">  - git config user.name "pickear"</span><br><span class="line">    #此处的user.email的值请改为自己的github注册邮箱</span><br><span class="line">  - git config user.email "xxxxxx@gmail.com"</span><br><span class="line">  - curl -o- -L https://yarnpkg.com/install.sh | bash</span><br><span class="line">  - export PATH=$HOME/.yarn/bin:$PATH</span><br><span class="line">  - npm install -g hexo-cli</span><br><span class="line">install:</span><br><span class="line">  - yarn</span><br><span class="line">script:</span><br><span class="line">  - hexo clean</span><br><span class="line">  - hexo generate</span><br><span class="line"></span><br><span class="line">after_success:</span><br><span class="line">  - cd ./public</span><br><span class="line">  - git init</span><br><span class="line">  - git add --all .</span><br><span class="line">  - git commit -m "Travis CI Auto Builder"</span><br><span class="line">    #此处的github.com/pickear/pickear.github.io.git请改为自己的仓库地址。GH_TOKEN变量为travis-ci后台配置的变量，值是github的token</span><br><span class="line">  - git push --force --quiet "https://$&#123;GH_TOKEN&#125;@github.com/pickear/pickear.github.io.git" master:master</span><br><span class="line"><span class="meta">#</span><span class="bash"> E: Build LifeCycle</span></span><br><span class="line"></span><br><span class="line">branches:</span><br><span class="line">  only:</span><br><span class="line">    #此处就是github的hexo存放源码的分支名</span><br><span class="line">    - hexo</span><br></pre></td></tr></table></figure>
+
+<h4 id="9-发布博客"><a href="#9-发布博客" class="headerlink" title="(9)发布博客"></a>(9)发布博客</h4><p>添加.travis.yml添加到仓库，并将本地库存提交到远程github仓库中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m "travis-ci持续集成"</span><br><span class="line">git push origin hexo</span><br></pre></td></tr></table></figure>
+<p>如果提交正常，过一会，访问 <a href="https://pickear.github.io/" target="_blank" rel="noopener">https://pickear.github.io/</a> (这里指的是你的github.io地址)，就可以正常访问博客了。并且，在github的远程仓库master分支中，存在了travis-ci编译出来的静态文件。</p>
+<h4 id="10-写博文"><a href="#10-写博文" class="headerlink" title="(10)写博文"></a>(10)写博文</h4><p>hexo的博文源文件是在source_posts下的，我们可以在此目录下添加一个md文件，例如”Hexo博客：-8-Travis CI自动化编译发布.md”，然后在文件里写博文。博文的语法是markdown，博文前可以添加分类，标签，作者和日期等信息:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">title: Hexo博客：(7)Travis CI自动化编译发布</span><br><span class="line">author: Dylan</span><br><span class="line">tags:</span><br><span class="line"><span class="bullet">  - </span>hexo</span><br><span class="line"><span class="bullet">  - </span>Travis CI</span><br><span class="line">categories:</span><br><span class="line"><span class="bullet">  - </span>技术杂粹</span><br><span class="line">date: 2020-04-19 07:44:00</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">前面有介绍过通过[<span class="string">hexo d</span>](<span class="link">https://pickear.github.io/2018/08/23/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-3-%E4%B8%8A%E4%BC%A0%E5%88%B0github/</span>) 命令来发布博文到github，到目前为主，前面的文章的前提是要自己有服务器。这篇文章将介绍，在没有服务器的前提下，怎么通过提交原码到github，用traci-ci持续集成工具自动编译发布博文。这些都将是全自动的，只要将博文提交到github就会自动发布。</span><br><span class="line"><span class="section">#### (1)创建$&#123;username&#125;.github.io仓库</span></span><br><span class="line">前面的文章 [<span class="string">Hexo博客：(3)上传到github</span>](<span class="link">https://pickear.github.io/2018/08/23/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-3-%E4%B8%8A%E4%BC%A0%E5%88%B0github/</span>) 已经介绍过如何注册github和创建username.github.io仓库(其中username为github的帐号名，比如你的github帐号为pickear，那仓库为pickear.github.io，这是固定的)</span><br><span class="line"><span class="section">#### (2)创建hexo分支</span></span><br><span class="line">将username.github.io这个仓库checkout到本地。然后用打开命令提示符，进入仓库的要目录，用git命令创建并切换到hexo分支。</span><br></pre></td></tr></table></figure>
+<p>添加完后，再按照前面的”发布博客”的步骤进行发布就可以。至于怎么样装修博客，使用NexT主题，添加评论模块，添加阅读数，可能参照前面的hexo相关博文。<br><img src="/images/blog/pickear.github.io.png" alt="图片"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hexo/" rel="tag"># hexo</a>
+          
+            <a href="/tags/Travis-CI/" rel="tag"># Travis CI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" rel="next" title="开源工具集绵">
+                <i class="fa fa-chevron-left"></i> 开源工具集绵
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTEzNi8xNTY2Mw=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Dylan" />
+            
+              <p class="site-author-name" itemprop="name">Dylan</p>
+              <p class="site-description motion-element" itemprop="description">以往不再，未来没来</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/pickear" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:pickear@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+		  
+		  
+			<div class="links-of-blogroll motion-element links-of-blogroll-block">
+			  <div class="links-of-blogroll-title">
+				<!-- modify icon to fire by szw -->
+				<i class="fa fa-history fa-" aria-hidden="true"></i>
+				最新文章
+			  </div>
+			  <ul class="links-of-blogroll-list">
+				
+				
+				  <li>
+					<a href="/2020/04/19/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-8-Travis%20CI%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E5%8F%91%E5%B8%83/" title="Hexo博客：(8)Travis CI自动化编译发布" target="_blank">Hexo博客：(8)Travis CI自动化编译发布</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/17/%E5%BC%80%E6%BA%90%E5%B7%A5%E5%85%B7%E9%9B%86%E7%BB%B5/" title="开源工具集绵" target="_blank">开源工具集绵</a>
+				  </li>
+				
+				  <li>
+					<a href="/2020/04/12/Hexo%E5%8D%9A%E5%AE%A2%EF%BC%9A-7-%E7%BB%99NexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%9C%80%E6%96%B0%E6%96%87%E7%AB%A0%E6%A8%A1%E5%9D%97%20-%20%E5%89%AF%E6%9C%AC/" title="Hexo博客：(7)给NexT主题添加最新文章模块" target="_blank">Hexo博客：(7)给NexT主题添加最新文章模块</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/11/05/concurrency_disagress_read/" title="并发:不一致读带来的问题" target="_blank">并发:不一致读带来的问题</a>
+				  </li>
+				
+				  <li>
+					<a href="/2018/10/26/spring-controller-generic/" title="Spring 控制器泛型化参数" target="_blank">Spring 控制器泛型化参数</a>
+				  </li>
+				
+			  </ul>
+			</div>
+		  
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-创建-username-github-io仓库"><span class="nav-number">1.</span> <span class="nav-text">(1)创建${username}.github.io仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-创建hexo分支"><span class="nav-number">2.</span> <span class="nav-text">(2)创建hexo分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-添加hexo源码"><span class="nav-number">3.</span> <span class="nav-text">(3)添加hexo源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-github创建token"><span class="nav-number">4.</span> <span class="nav-text">(4)github创建token</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-登录travis-ci"><span class="nav-number">5.</span> <span class="nav-text">(5)登录travis-ci</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-同步仓库到travis-ci"><span class="nav-number">6.</span> <span class="nav-text">(6)同步仓库到travis-ci</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-设置travis-ci仓库"><span class="nav-number">7.</span> <span class="nav-text">(7)设置travis-ci仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-创建-travis-yml"><span class="nav-number">8.</span> <span class="nav-text">(8)创建.travis.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9-发布博客"><span class="nav-number">9.</span> <span class="nav-text">(9)发布博客</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-写博文"><span class="nav-number">10.</span> <span class="nav-text">(10)写博文</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dylan 版权所有 粤ICP备18080701号</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dDRzyTmQVCxeR8rMT6f5cmxT-gzGzoHsz", "ca49g09mFXh5lV0qx7c5lbQE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
