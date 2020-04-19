@@ -1,4 +1,4 @@
-title: Hexo博客：(7)Travis CI自动化编译发布
+title: Hexo博客：(8)Travis CI自动化编译发布
 author: Dylan
 tags:
   - hexo
