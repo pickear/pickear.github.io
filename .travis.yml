@@ -9,7 +9,9 @@ cache:
     - node_modules
   
 before_install:
+    #此处的user.name的值请改为自己的github用户名
   - git config user.name "pickear"
+    #此处的user.email的值请改为自己的github注册邮箱
   - git config user.email "pickear@gmail.com"
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
@@ -25,9 +27,11 @@ after_success:
   - git init
   - git add --all .
   - git commit -m "Travis CI Auto Builder"
+    #此处的github.com/pickear/pickear.github.io.git请改为自己的仓库地址。GH_TOKEN变量为travis-ci后台配置的变量，值是github的token
   - git push --force --quiet "https://${GH_TOKEN}@github.com/pickear/pickear.github.io.git" master:master
 # E: Build LifeCycle
 
 branches:
   only:
+    #此处就是github的hexo存放源码的分支名
     - hexo
